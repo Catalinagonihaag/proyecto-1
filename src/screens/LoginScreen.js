@@ -32,6 +32,8 @@ export default function LoginScreen({ navigation }) {
     })*/
 
     signIn({ email: email.value, password: password.value })
+      .then(e => console.log('Logeado!', e))
+      .catch(e => { console.log(e) })
   }
 
   return (
