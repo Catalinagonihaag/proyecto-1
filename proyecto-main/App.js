@@ -22,8 +22,10 @@ const firebaseConfig = {
   appId: "1:993924137747:web:fc2f3003f93df2c41750e6",
   measurementId: "G-40LW453GJ8"
 };
-initializeApp(firebaseConfig)
 
+
+
+initializeApp(firebaseConfig)
 
 const Stack = createStackNavigator()
 export const AuthContext = React.createContext();

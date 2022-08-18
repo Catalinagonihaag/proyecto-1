@@ -12,6 +12,7 @@ import { emailValidator } from '../helpers/emailValidator'
 import { passwordValidator } from '../helpers/passwordValidator'
 import { nameValidator } from '../helpers/nameValidator'
 import { AuthContext } from '../../App'
+import {LoginScreen} from '../screens/LoginScreen'
 
 export default function RegisterScreen({ navigation }) {
   const [name, setName] = useState({ value: '', error: '' })
@@ -75,9 +76,9 @@ export default function RegisterScreen({ navigation }) {
         Sign Up
       </Button>
       <View style={styles.row}>
-        <Text>Already have an account? </Text>
-        <TouchableOpacity onPress={() => navigation.replace('LoginScreen')}>
-          <Text style={styles.link}>Login</Text>
+        <Text>Ya estas registrado? </Text>
+        <TouchableOpacity onPress={() => this.props.navigation.navigate('LoginScreen')}>
+          <Text style={styles.link}>Iniciar sesión</Text>
         </TouchableOpacity>
       </View>
     </Background>

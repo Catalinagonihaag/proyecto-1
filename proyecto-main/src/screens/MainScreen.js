@@ -15,7 +15,7 @@ const Tab = createBottomTabNavigator();
 function HomeScreen() {
     return (
         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-            <Text>Home!</Text>
+            <Text>HOY SE SALE</Text>
         </View>
     );
 }
@@ -28,6 +28,21 @@ function SettingsScreen() {
     );
 }
 
+function SearchScreen() {
+    return (
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+            <Text>Buscar</Text>
+        </View>
+    );
+}
+
+function NotificationScreen() {
+    return (
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+            <Text>Buscar</Text>
+        </View>
+    );
+}
 export default function MainScreen({ navigation }) {
     const { signOut } = useContext(AuthContext);
 
@@ -35,6 +50,8 @@ export default function MainScreen({ navigation }) {
         <Tab.Navigator>
             <Tab.Screen name="Home" component={HomeScreen} />
             <Tab.Screen name="Settings" component={SettingsScreen} />
+            <Tab.Screen name="Buscar" component={SearchScreen} />
+            <Tab.Screen name="Notificaciones" component={NotificationScreen} />
         </Tab.Navigator>
     )
 }
