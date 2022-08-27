@@ -33,7 +33,20 @@ export default function LoginScreen({ navigation }) {
 
     signIn({ email: email.value, password: password.value })
       .then(e => console.log('Logeado!', e))
-      .catch(e => { console.log(e) })
+      .catch(e => {
+        if (e.code = "auth/network-request-failed") {
+          console.error("LoginRequest - Datos Incorrectos o posible error de la red")
+        }
+        else {
+          console.log(e.code)
+        }
+
+      })
+  }
+
+  const autoCompleteFields = (email) =>{
+    setEmail({value: email, error:''})
+    setPassword("password")
   }
 
   return (
@@ -68,9 +81,16 @@ export default function LoginScreen({ navigation }) {
         </TouchableOpacity>
       </View>*/}
 
+
+
+      <Button mode="outlined" onPress={autoCompleteFields({email: "ASD"})}>
+        tester@gmail.com
+      </Button>
       <Button mode="contained" onPress={onLoginPressed}>
         Login
       </Button>
+
+
     </Background>
   )
 }
@@ -93,4 +113,5 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: theme.colors.primary,
   },
+  
 })
