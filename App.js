@@ -3,6 +3,8 @@ import { Provider } from 'react-native-paper'
 import { NavigationContainer } from '@react-navigation/native'
 import { createStackNavigator } from '@react-navigation/stack'
 import { theme } from './src/core/theme'
+import { Platform } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
   StartScreen,
   LoginScreen,
@@ -65,10 +67,9 @@ export default function App() {
       let userToken;
 
       try {
-        // Restore token stored in `SecureStore` or any other encrypted storage
-        // userToken = await SecureStore.getItemAsync('userToken');
+        userToken = await AsyncStorage.getItem('userToken');
       } catch (e) {
-        // Restoring token failed
+        console.log(e)
       }
 
       // After restoring token, we may need to validate it in production apps
@@ -90,11 +91,13 @@ export default function App() {
         // In the example, we'll use a dummy token
 
         return signInWithEmailAndPassword(getAuth(), data.email, data.password)
-          .then(() => {
-            dispatch({ type: 'SIGN_IN', token: 'dummy-auth-token' });
+          .then((data) => {
+            AsyncStorage.setItem('userToken', data.user.accessToken)
+            dispatch({ type: 'SIGN_IN', token: data.user.accessToken })
           })
           .catch(e => {
-            throw e
+            if (e.code == "auth/invalid-email")
+              throw { code: e.code, message: "LoginResponse: Email Invalido" }
           })
 
 
@@ -113,18 +116,21 @@ export default function App() {
           })
           .catch(error => {
 
-            if (error.code === 'auth/email-already-in-use') {
-              throw 'Email ya registrado'
-            }
-            if (error.code === 'auth/weak-password') {
-              throw 'Contraseña muy débil'
-            }
-            if (error.code === 'auth/invalid-email') {
-              throw { error: 'Email Invalido!' }
-            }
 
-            console.log(error)
-            throw 'Error al registrar, intente más tarde'
+            switch (error.code) {
+              case "auth/email-already-in-use":
+                error_message = "Email ya registrado"
+                break
+              case "auth/weak-password":
+                error_message = "Contraseña muy débil"
+                break
+              case "auth/invalid-email":
+                error_message = "auth/invalid-email"
+              default:
+                let error_message = "Error al registrar, intente más tarde"
+                break
+            }
+            throw { code: error.code, message: error_message }
           });
       },
     }),
@@ -142,7 +148,7 @@ export default function App() {
           >
             {
               state.userToken == null ? (
-                // No token found, user isn't signed in
+                //? No token found, user isn't signed in
                 <Stack.Screen
                   name="StartScreen"
                   component={StartScreen}
@@ -153,7 +159,7 @@ export default function App() {
                   }}
                 />
               ) : (
-                // User is signed in
+                //? User is signed in
                 <Stack.Screen name="MainScreen" component={MainScreen} />
 
               )

@@ -8,6 +8,7 @@ import { AuthContext } from '../../App'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { NavigationContainer } from '@react-navigation/native';
 import { Text, View } from 'react-native'
+import { ProfileScreen } from './index'
 
 
 const Tab = createBottomTabNavigator();
@@ -35,6 +36,7 @@ export default function MainScreen({ navigation }) {
         <Tab.Navigator>
             <Tab.Screen name="Home" component={HomeScreen} />
             <Tab.Screen name="Settings" component={SettingsScreen} />
+            <Tab.Screen name="Profile" component={ProfileScreen}/>
         </Tab.Navigator>
     )
 }

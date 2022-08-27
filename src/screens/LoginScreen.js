@@ -25,7 +25,9 @@ export default function LoginScreen({ navigation }) {
       setPassword({ ...password, error: passwordError })
       return
     }
-    /* bypass login depr.
+
+    //! bypass login deprecated.
+    /*
     navigation.reset({
       index: 0,
       routes: [{ name: 'Dashboard' }],
@@ -34,19 +36,13 @@ export default function LoginScreen({ navigation }) {
     signIn({ email: email.value, password: password.value })
       .then(e => console.log('Logeado!', e))
       .catch(e => {
-        if (e.code = "auth/network-request-failed") {
-          console.error("LoginRequest - Datos Incorrectos o posible error de la red")
-        }
-        else {
-          console.log(e.code)
-        }
-
+        console.error(e.message)
       })
   }
 
-  const autoCompleteFields = (email,password) =>{
-    setEmail({value: email, error:''})
-    setPassword({value: password, error:''})
+  const autoCompleteFields = (email, password) => {
+    setEmail({ value: email, error: '' })
+    setPassword({ value: password, error: '' })
   }
 
   return (
@@ -83,7 +79,7 @@ export default function LoginScreen({ navigation }) {
 
 
 
-      <Button mode="outlined" onPress={()=>autoCompleteFields("tester@gmail.com","tester")} >
+      <Button mode="outlined" onPress={() => autoCompleteFields("tester@gmail.com", "tester")} >
         tester@gmail.com
       </Button>
       <Button mode="contained" onPress={onLoginPressed}>
@@ -113,5 +109,5 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: theme.colors.primary,
   },
-  
+
 })
