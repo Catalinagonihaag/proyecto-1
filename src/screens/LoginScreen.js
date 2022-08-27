@@ -44,9 +44,9 @@ export default function LoginScreen({ navigation }) {
       })
   }
 
-  const autoCompleteFields = (email) =>{
+  const autoCompleteFields = (email,password) =>{
     setEmail({value: email, error:''})
-    setPassword("password")
+    setPassword({value: password, error:''})
   }
 
   return (
@@ -83,7 +83,7 @@ export default function LoginScreen({ navigation }) {
 
 
 
-      <Button mode="outlined" onPress={autoCompleteFields({email: "ASD"})}>
+      <Button mode="outlined" onPress={()=>autoCompleteFields("tester@gmail.com","tester")} >
         tester@gmail.com
       </Button>
       <Button mode="contained" onPress={onLoginPressed}>
