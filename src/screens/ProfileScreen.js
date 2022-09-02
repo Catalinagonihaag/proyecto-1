@@ -1,3 +1,4 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { useState, useEffect } from 'react';
 import { View, SafeAreaView, StyleSheet } from 'react-native';
 import {
@@ -7,37 +8,31 @@ import {
     Text,
     TouchableRipple,
 } from 'react-native-paper';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { ReadUserData } from '../api/ApiFirebase'
+
 
 const ProfileScreen = () => {
     const [user, setUser] = useState({})
 
     useEffect(() => {
-        //! fetch user with an api...
-        /* like 
-            fetchUser(..get token..){(user)=>{
-                    setUser(user)
-                }
-            }
-         */
-        
-        
-        setUser({
-            image_url: "",
-            name: "tester",
-            followers: 1820,
-            mutualFollows: 530,
-            following: 2403,
-            description: "Hola Yo soy el teste de la applicacion \nYo se que me siento mucho mas fuerte sin tu amor..",
-            posts: [
-                {
-                    image_url: "",
-                    likes: 20,
-                }
-            ]
-        })
+        AsyncStorage.getItem('userFirebase')
+            .then(value => JSON.parse(value))
+            .then(user => {
+                ReadUserData(user.uid).then(userData => {
+                    console.log(userData)
+                    setUser({
+                        name: userData.username,
+                        description: userData.description,
+                        followers: userData.hasOwnProperty("followers") ? userData.followers.length : 0,
+                        following: (userData.hasOwnProperty("following") ? userData.following.length : 0),
+                        mutualFollows: userData.hasOwnProperty("mutualFollows") ? userData.mutualFollows : 0,
 
-    }, []);
+                    })
+
+                })
+            })
+    }, [])
+
 
     return (
         <SafeAreaView style={styles.container}>

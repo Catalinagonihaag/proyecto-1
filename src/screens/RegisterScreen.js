@@ -30,7 +30,7 @@ export default function RegisterScreen({ navigation }) {
       return
     }
 
-    signUp({ email: email.value, password: password.value })
+    signUp({ name: name.value, email: email.value, password: password.value })
       .then(e => console.log('Logeado!', e))
       .catch(e => { console.log(e.message) })
   }

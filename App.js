@@ -13,18 +13,7 @@ import {
   MainScreen,
 } from './src/screens'
 
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
-import { initializeApp } from "firebase/app";
-const firebaseConfig = {
-  apiKey: "AIzaSyD9Y7A-NBwExsXtDySImWPn2sjnPY5Pq8I",
-  authDomain: "hss-2d0af.firebaseapp.com",
-  projectId: "hss-2d0af",
-  storageBucket: "hss-2d0af.appspot.com",
-  messagingSenderId: "993924137747",
-  appId: "1:993924137747:web:fc2f3003f93df2c41750e6",
-  measurementId: "G-40LW453GJ8"
-};
-initializeApp(firebaseConfig)
+import { RegisterUser, LoginWithEmailAndPassword } from './src/api/ApiFirebase';
 
 
 const Stack = createStackNavigator()
@@ -90,9 +79,11 @@ export default function App() {
         // After getting token, we need to persist the token using `SecureStore` or any other encrypted storage
         // In the example, we'll use a dummy token
 
-        return signInWithEmailAndPassword(getAuth(), data.email, data.password)
+        return LoginWithEmailAndPassword(data.email, data.password)
           .then((data) => {
+            AsyncStorage.setItem('userFirebase',  JSON.stringify(data.user))
             AsyncStorage.setItem('userToken', data.user.accessToken)
+            
             dispatch({ type: 'SIGN_IN', token: data.user.accessToken })
           })
           .catch(e => {
@@ -109,8 +100,8 @@ export default function App() {
         // After getting token, we need to persist the token using `SecureStore` or any other encrypted storage
         // In the example, we'll use a dummy token
 
-        return createUserWithEmailAndPassword(getAuth(), data.email, data.password)
-          .then(() => {
+        return RegisterUser(data.name, data.email, data.password)
+          .then((data) => {
             console.log('User account created & signed in!')
             dispatch({ type: 'SIGN_IN', token: 'dummy-auth-token' })
           })
