@@ -3,7 +3,7 @@ import { Provider } from 'react-native-paper'
 import { NavigationContainer } from '@react-navigation/native'
 import { createStackNavigator } from '@react-navigation/stack'
 import { theme } from './src/core/theme'
-import { Platform } from 'react-native';
+import { Platform, Text } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
   StartScreen,
@@ -81,9 +81,9 @@ export default function App() {
 
         return LoginWithEmailAndPassword(data.email, data.password)
           .then((data) => {
-            AsyncStorage.setItem('userFirebase',  JSON.stringify(data.user))
+            AsyncStorage.setItem('userFirebase', JSON.stringify(data.user))
             AsyncStorage.setItem('userToken', data.user.accessToken)
-            
+
             dispatch({ type: 'SIGN_IN', token: data.user.accessToken })
           })
           .catch(e => {
@@ -139,6 +139,7 @@ export default function App() {
           >
             {
               state.userToken == null ? (
+
                 //? No token found, user isn't signed in
                 <Stack.Screen
                   name="StartScreen"
@@ -158,6 +159,5 @@ export default function App() {
           </Stack.Navigator>
         </NavigationContainer>
       </Provider>
-    </AuthContext.Provider>
-  )
+    </AuthContext.Provider>)
 }

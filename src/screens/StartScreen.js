@@ -1,9 +1,5 @@
 import React, { Fragment } from 'react'
-import Background from '../components/Background'
 import Logo from '../components/Logo'
-import Header from '../components/Header'
-import Button from '../components/Button'
-import Paragraph from '../components/Paragraph'
 import { StyleSheet, View } from 'react-native'
 import {
   LoginScreen,
@@ -26,9 +22,10 @@ export default function StartScreen({ navigation }) {
   return (
     <Fragment>
       <View style={styles.Logo}>
-        <Logo/>
+        <Logo />
       </View>
       <Tab.Navigator>
+
         <Tab.Screen name="Iniciar Sesión" component={LoginScreen} />
         <Tab.Screen name="Registrarse" component={RegisterScreen} />
       </Tab.Navigator>

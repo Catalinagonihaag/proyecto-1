@@ -25,14 +25,7 @@ export default function LoginScreen({ navigation }) {
       setPassword({ ...password, error: passwordError })
       return
     }
-
-    //! bypass login deprecated.
-    /*
-    navigation.reset({
-      index: 0,
-      routes: [{ name: 'Dashboard' }],
-    })*/
-
+    
     signIn({ email: email.value, password: password.value })
       .then(e => console.log('Logeado!', e))
       .catch(e => {
@@ -69,15 +62,6 @@ export default function LoginScreen({ navigation }) {
         errorText={password.error}
         secureTextEntry
       />
-      {/*  <View style={styles.forgotPassword}>
-        <TouchableOpacity
-          onPress={() => navigation.navigate('ResetPasswordScreen')}
-        >
-          <Text style={styles.forgot}>Contraseña olvidada?</Text>
-        </TouchableOpacity>
-      </View>*/}
-
-
 
       <Button mode="outlined" onPress={() => autoCompleteFields("tester@gmail.com", "tester")} >
         tester@gmail.com

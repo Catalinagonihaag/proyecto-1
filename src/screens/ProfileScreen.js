@@ -64,7 +64,7 @@ const ProfileScreen = () => {
                             </View>
                         </View>
 
-                        <View><Text style={styles.biografy}><p>{user.description}</p></Text></View>
+                        <View><Text style={styles.biografy}>{user.description}</Text></View>
                     </View>
                 </View>
             </View>
