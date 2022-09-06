@@ -1,17 +1,15 @@
 import React from 'react'
 import Background from '../../components/Background'
-import Logo from '../../components/Logo'
 import Button from '../../components/Button'
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { AuthContext } from '../../../App'
 import { useContext } from 'react';
 import { SafeAreaView } from 'react-native';
 import { theme } from '../../core/theme';
 import UserImage from '../../components/UserComponents/UserImage';
 import TextInput from '../../components/TextInput';
 
-export default function SettingsScreen({ navigation }) {
-    const { signOut } = useContext(AuthContext);
+export default function SettingsScreen({ navigation , context }) {
+    const { signOut } = useContext(context);
 
     const onPressLogOutButton = async () => {
         AsyncStorage.removeItem("userToken")

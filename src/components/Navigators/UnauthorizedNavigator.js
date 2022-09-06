@@ -18,15 +18,15 @@ const styles = StyleSheet.create({
   }
 })
 
-export default function UnauthorizedNavigator({ navigation }) {
+export default function UnauthorizedNavigator({ navigation, context }) {
   return (
     <Fragment>
       <View style={styles.Logo}>
         <Logo />
       </View>
       <Tab.Navigator>
-        <Tab.Screen name="Iniciar Sesión" component={LoginScreen} /> 
-        <Tab.Screen name="Registrarse" component={RegisterScreen} />
+        <Tab.Screen name="Iniciar Sesión" children={() => <LoginScreen context={context} />} />
+        <Tab.Screen name="Registrarse" children={() => <RegisterScreen context={context} />} />
       </Tab.Navigator>
     </Fragment>
   )

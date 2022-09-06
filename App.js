@@ -3,15 +3,7 @@ import { Provider } from 'react-native-paper'
 import { NavigationContainer } from '@react-navigation/native'
 import { createStackNavigator } from '@react-navigation/stack'
 import { theme } from './src/core/theme'
-import { Platform, Text } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {
-  StartScreen,
-  LoginScreen,
-  RegisterScreen,
-  ResetPasswordScreen,
-  MainScreen,
-} from './src/screens'
 
 import { RegisterUser, LoginWithEmailAndPassword } from './src/api/ApiFirebase';
 import { AuthorizedNavigator, UnauthorizedNavigator } from './src/components/Navigators'
@@ -142,16 +134,17 @@ export default function App() {
                 //? No token found, user isn't signed in
                 <Stack.Screen
                   name="UnauthorizedNavigator"
-                  component={UnauthorizedNavigator}
                   options={{
                     title: 'Iniciar Sesión',
                     // When logging out, a pop animation feels intuitive
                     animationTypeForReplace: state.isSignout ? 'pop' : 'push',
                   }}
-                />
+                   children={()=><UnauthorizedNavigator context={AuthContext}/>}
+                >
+                </Stack.Screen>
               ) : (
                 //? User is signed in
-                <Stack.Screen name="AuthorizedNavigator" component={AuthorizedNavigator} />
+                <Stack.Screen name="AuthorizedNavigator" children={()=><AuthorizedNavigator context={AuthContext}/>} />
 
               )
             }

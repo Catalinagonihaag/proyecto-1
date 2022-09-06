@@ -12,7 +12,8 @@ import {
 import { ReadUserData } from '../../api/ApiFirebase'
 import UserImage from '../../components/UserComponents/UserImage';
 import { theme } from '../../core/theme';
-import { LoadingScreen } from '../../screens'
+import LoadingScreen from '../CommonScreens/LoadingScreen';
+
 
 const ProfileScreen = () => {
     const [user, setUser] = useState({})

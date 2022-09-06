@@ -3,12 +3,11 @@ import Background from '../../components/Background'
 import Header from '../../components/Header'
 import Button from '../../components/Button'
 import TextInput from '../../components/TextInput'
-import { AuthContext } from '../../../App'
 
-export default function LoginScreen({ navigation }) {
+export default function LoginScreen({ navigation, context }) {
   const [email, setEmail] = useState({ value: '', error: '' })
   const [password, setPassword] = useState({ value: '', error: '' })
-  const { signIn } = useContext(AuthContext);
+  const { signIn } = useContext(context);
 
   const onLoginPressed = () => {
     const emailError = false //emailValidator(email.value)

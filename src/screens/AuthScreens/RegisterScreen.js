@@ -10,13 +10,13 @@ import { theme } from '../../core/theme'
 import { emailValidator } from '../../helpers/emailValidator'
 import { passwordValidator } from '../../helpers/passwordValidator'
 import { nameValidator } from '../../helpers/nameValidator'
-import { AuthContext } from '../../../App'
 
-export default function RegisterScreen({ navigation }) {
+
+export default function RegisterScreen({ navigation , context }) {
   const [name, setName] = useState({ value: '', error: '' })
   const [email, setEmail] = useState({ value: '', error: '' })
   const [password, setPassword] = useState({ value: '', error: '' })
-  const { signUp } = useContext(AuthContext);
+  const { signUp } = useContext(context);
 
   const onSignUpPressed = () => {
     const nameError = nameValidator(name.value)

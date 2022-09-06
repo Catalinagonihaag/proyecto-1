@@ -18,7 +18,7 @@ function HomeScreen() {
 }
 
 
-export default function AuthorizedNavigator({ navigation }) {
+export default function AuthorizedNavigator({ navigation, context }) {
     //const { signOut } = useContext(AuthContext);
 
     return (
@@ -46,8 +46,8 @@ export default function AuthorizedNavigator({ navigation }) {
         >
             <Tab.Screen name="Home" component={HomeScreen} />
             <Tab.Screen name="Search" component={SearchScreen} />
-            <Tab.Screen name="Settings" component={SettingsScreen} />
-            <Tab.Screen name="Profile" component={ProfileScreen} />
+            <Tab.Screen name="Settings" children={()=><SettingsScreen context={context}/>} />
+            <Tab.Screen name="Profile" children={()=><ProfileScreen context={context}/>} />
         </Tab.Navigator>
     )
 }
