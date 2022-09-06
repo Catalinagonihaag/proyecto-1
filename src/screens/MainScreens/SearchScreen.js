@@ -17,6 +17,13 @@ export default function SearchScreen({ navigation }) {
   const [hayResultados, setHayResultados] = useState(false)
 
 
+  const onClickUserProfile = (userId) => {
+    console.log('onClickUserProfile', userId)
+  }
+  const onClickFollowButton = (userId) => {
+    console.log('onClickFollowButton', userId)
+  }
+
   const getUserList = () => {
     AsyncStorage.getItem('userFirebase')
       .then(user => JSON.parse(user))
@@ -37,7 +44,16 @@ export default function SearchScreen({ navigation }) {
   const RenderListUsers = () => {
 
     return (
-      userList.map(({ uid, image_url, username }) => { return <UserListItem key={uid} image_url={image_url} username={username} followStatusName="Follow" /> })
+      userList.map(({ uid, image_url, username }) => {
+        return <UserListItem
+          key={uid}
+          image_url={image_url}
+          username={username}
+          followStatusName="Follow"
+          onPressAvatar={() => onClickUserProfile(uid)}
+          onPressFollow={() => onClickFollowButton(uid)}
+        />
+      })
     )
 
   }

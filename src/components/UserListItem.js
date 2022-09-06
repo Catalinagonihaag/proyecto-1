@@ -1,25 +1,23 @@
-import { View, StyleSheet, Text } from 'react-native'
-import { TouchableOpacity } from "react-native-gesture-handler";
-import { Avatar } from 'react-native-paper';
+import { View, StyleSheet, Text, TouchableOpacity } from 'react-native'
 import Button from './Button';
 import UserImage from './UserComponents/UserImage';
 
 
-export default function UserListItem({ image_url, username, followStatusName, onPress }) {
+export default function UserListItem({ image_url, username, followStatusName, onPressFollow, onPressAvatar }) {
     const miUser = username ? username : 'UserNameNotFound'
     return (
 
-        <View style={styles.userItem}>
-            <View style={styles.avatar}>
+        <View style={styles.userItem} onPress={() => { console.log("press") }} >
+            <TouchableOpacity style={styles.avatar} onPress={onPressAvatar}>
                 <UserImage size={70} optional_image={image_url} otherUser={true} />
-            </View>
+            </TouchableOpacity >
             <View style={styles.userData}>
                 <Text style={[styles.title, { fontSize: 20 }]}>{miUser}</Text>
-                <TouchableOpacity onPress={onPress}>
-                    <Button style={styles.followStatus} labelStyle={{ fontSize: 10, height: '100%', top: 7 }} color='white'>{followStatusName}</Button>
-                </TouchableOpacity>
+
+                <Button style={styles.followStatus} onPress={onPressFollow} labelStyle={{ fontSize: 10, height: '100%', top: 7 }} color='white'>{followStatusName}</Button>
+
             </View>
-        </View>
+        </View >
     );
 }
 
