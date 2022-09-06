@@ -1,10 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import Background from '../../components/Background'
-import Logo from '../../components/Logo'
-import Header from '../../components/Header'
-import Paragraph from '../../components/Paragraph'
 import Button from '../../components/Button'
-import { View, StyleSheet, Text } from 'react-native'
+import { View, StyleSheet, Text, SafeAreaView } from 'react-native'
 import { theme } from '../../core/theme'
 import TextInput from '../../components/TextInput'
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -46,37 +43,39 @@ export default function SearchScreen({ navigation }) {
   }
 
   return (
-    <Background style={styles.container}>
-      <View style={styles.searchSection} >
-        <View style={{ display: 'flex', flexDirection: 'row' }}>
-          <Ionicons name={'search'} size={20} style={styles.iconSearchBox} />
-          <TextInput
-            style={styles.inputSearch}
-            selectionColor={theme.colors.primary}
-            underlineColor="transparent"
-            mode="outlined"
-            label="Search"
-          />
+    <SafeAreaView style={theme.appContainer}>
+      <Background style={styles.container}>
+        <View style={styles.searchSection} >
+          <View style={{ display: 'flex', flexDirection: 'row' }}>
+            <Ionicons name={'search'} size={20} style={styles.iconSearchBox} />
+            <TextInput
+              style={styles.inputSearch}
+              selectionColor={theme.colors.primary}
+              underlineColor="transparent"
+              mode="outlined"
+              label="Search"
+            />
+
+          </View>
+          <View style={styles.filtersButtons}>
+            <TouchableOpacity onPress={getUserList}>
+              <Button style={[styles.buttonFilter, { backgroundColor: '#4e81df', 'color': 'white' }]} mode={'outlined'} labelStyle={{ fontSize: 10 }}> Users</Button>
+            </TouchableOpacity>
+            <Button style={styles.buttonFilter} labelStyle={{ fontSize: 10 }} > Hastags </Button>
+            <Button style={styles.buttonFilter} labelStyle={{ fontSize: 10 }}> Posteos </Button>
+          </View>
+        </View>
+        <View style={styles.resultsSection}>
+          {
+            hayResultados
+              ? <RenderListUsers />
+              : console.log('Esperando a que se busque algo')
+
+          }
 
         </View>
-        <View style={styles.filtersButtons}>
-          <TouchableOpacity onPress={getUserList}>
-            <Button  style={[styles.buttonFilter, { backgroundColor: '#4e81df', 'color': 'white' }]} mode={'outlined'} labelStyle={{ fontSize: 10 }}> Users</Button>
-          </TouchableOpacity>
-          <Button style={styles.buttonFilter} labelStyle={{ fontSize: 10 }} > Hastags </Button>
-          <Button style={styles.buttonFilter} labelStyle={{ fontSize: 10 }}> Posteos </Button>
-        </View>
-      </View>
-      <View style={styles.resultsSection}>
-        {
-          hayResultados
-            ? <RenderListUsers />
-            : console.log('Esperando a que se busque algo')
-
-        }
-
-      </View>
-    </Background>
+      </Background>
+    </SafeAreaView>
   )
 }
 const styles = StyleSheet.create({

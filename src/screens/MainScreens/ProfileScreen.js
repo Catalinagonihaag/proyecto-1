@@ -1,6 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { useState, useEffect } from 'react';
-import { View, SafeAreaView, StyleSheet } from 'react-native';
+import { View, SafeAreaView, StyleSheet, Platform } from 'react-native';
+
 import {
     Avatar,
     Title,
@@ -9,6 +10,8 @@ import {
     TouchableRipple,
 } from 'react-native-paper';
 import { ReadUserData } from '../../api/ApiFirebase'
+import UserImage from '../../components/UserComponents/UserImage';
+import { theme } from '../../core/theme';
 import { LoadingScreen } from '../../screens'
 
 const ProfileScreen = () => {
@@ -43,16 +46,11 @@ const ProfileScreen = () => {
             ?
             <LoadingScreen />
             :
-            <SafeAreaView style={styles.container}>
+            <SafeAreaView style={theme.appContainer}>
                 <View style={styles.userInfoSection}>
                     <View style={{ flexDirection: 'row', marginTop: 15 }}>
                         <View style={styles.avatar}>
-                            <Avatar.Image
-                                source={{
-                                    uri: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460__340.png',
-                                }}
-                                size={80}
-                            />
+                            <UserImage size={80}/>
                         </View>
 
                         <View style={styles.userData}>
@@ -93,9 +91,6 @@ export default ProfileScreen;
 
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-    },
     title: {
         marginTop: 15,
         marginBottom: 5,

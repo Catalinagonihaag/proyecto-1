@@ -2,21 +2,16 @@ import { View, StyleSheet, Text } from 'react-native'
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { Avatar } from 'react-native-paper';
 import Button from './Button';
+import UserImage from './UserComponents/UserImage';
 
 
 export default function UserListItem({ image_url, username, followStatusName, onPress }) {
-    const imgUrl = image_url ? image_url : 'https://www.pngitem.com/pimgs/m/146-1468479_my-profile-icon-blank-profile-picture-circle-hd.png'
     const miUser = username ? username : 'UserNameNotFound'
     return (
 
         <View style={styles.userItem}>
             <View style={styles.avatar}>
-                <Avatar.Image
-                    source={{
-                        uri: imgUrl,
-                    }}
-                    size={70}
-                />
+                <UserImage size={70} optional_image={image_url} otherUser={true} />
             </View>
             <View style={styles.userData}>
                 <Text style={[styles.title, { fontSize: 20 }]}>{miUser}</Text>
