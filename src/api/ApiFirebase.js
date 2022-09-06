@@ -40,9 +40,7 @@ export const WriteUserData = async (userId, name, email, image_url = '') => {
     });
 }
 
-const initDatos = (user) => {
 
-}
 export const ReadUserData = async (userId) => {
     const db = ref(getDatabase(app));
     return get(child(db, `users/${userId}`)).then((snapshot) => {
@@ -66,3 +64,22 @@ export const ReadUserData = async (userId) => {
 
 }
 
+export const GetUserList = async (userId) => {
+    const db = ref(getDatabase(app));
+    let jsonUsers = {}
+    return get(child(db, `users`)).then((snapshot) => {
+        if (snapshot.exists()) {
+            console.log(snapshot.val(), userId)
+            for (const [key, value] of Object.entries(snapshot.val())) {
+                if (key != userId) {
+                    jsonUsers[key] = value;
+                }
+            }
+            return jsonUsers;
+        } else {
+            console.log("No data available");
+        }
+    }).catch((error) => {
+        console.error(error);
+    });
+}

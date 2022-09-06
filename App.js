@@ -14,7 +14,7 @@ import {
 } from './src/screens'
 
 import { RegisterUser, LoginWithEmailAndPassword } from './src/api/ApiFirebase';
-
+import { AuthorizedNavigator, UnauthorizedNavigator } from './src/components/Navigators'
 
 const Stack = createStackNavigator()
 export const AuthContext = React.createContext();
@@ -50,27 +50,6 @@ export default function App() {
     }
   );
 
-  useEffect(() => {
-    // Fetch the token from storage then navigate to our appropriate place
-    const bootstrapAsync = async () => {
-      let userToken;
-
-      try {
-        userToken = await AsyncStorage.getItem('userToken');
-      } catch (e) {
-        console.log(e)
-      }
-
-      // After restoring token, we may need to validate it in production apps
-
-      // This will switch to the App screen or Auth screen and this loading
-      // screen will be unmounted and thrown away.
-      dispatch({ type: 'RESTORE_TOKEN', token: userToken });
-    };
-
-    bootstrapAsync();
-  }, [dispatch]);
-
   const authContext = useMemo(
     () => ({
       signIn: async (data) => {
@@ -98,7 +77,6 @@ export default function App() {
         // In a production app, we need to send user data to server and get a token
         // We will also need to handle errors if sign up failed
         // After getting token, we need to persist the token using `SecureStore` or any other encrypted storage
-        // In the example, we'll use a dummy token
 
         return RegisterUser(data.name, data.email, data.password)
           .then((data) => {
@@ -128,6 +106,27 @@ export default function App() {
     []
   );
 
+  useEffect(() => {
+    // Fetch the token from storage then navigate to our appropriate place
+    const bootstrapAsync = async () => {
+      let userToken;
+
+      try {
+        userToken = await AsyncStorage.getItem('userToken');
+      } catch (e) {
+        console.log(e)
+      }
+
+      // After restoring token, we may need to validate it in production apps
+
+      // This will switch to the App screen or Auth screen and this loading
+      // screen will be unmounted and thrown away.
+      dispatch({ type: 'RESTORE_TOKEN', token: userToken });
+    };
+
+    bootstrapAsync();
+  }, [dispatch]);
+
   return (
     <AuthContext.Provider value={authContext}>
       <Provider theme={theme}>
@@ -142,8 +141,8 @@ export default function App() {
 
                 //? No token found, user isn't signed in
                 <Stack.Screen
-                  name="StartScreen"
-                  component={StartScreen}
+                  name="UnauthorizedNavigator"
+                  component={UnauthorizedNavigator}
                   options={{
                     title: 'Iniciar Sesión',
                     // When logging out, a pop animation feels intuitive
@@ -152,7 +151,7 @@ export default function App() {
                 />
               ) : (
                 //? User is signed in
-                <Stack.Screen name="MainScreen" component={MainScreen} />
+                <Stack.Screen name="AuthorizedNavigator" component={AuthorizedNavigator} />
 
               )
             }
