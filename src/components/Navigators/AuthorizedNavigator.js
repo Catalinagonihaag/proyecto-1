@@ -1,4 +1,4 @@
-import React  from 'react'
+import React from 'react'
 
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Text, View } from 'react-native'
@@ -36,8 +36,8 @@ export default function AuthorizedNavigator({ navigation, context }) {
                         iconName = focused ? 'person' : 'person-outline';
                     } else if (route.name === 'Search') {
                         iconName = focused ? 'search' : 'search-outline';
-                    } 
-                    
+                    }
+
 
 
                     return <Ionicons name={iconName} size={size} color={color} />;
@@ -46,8 +46,8 @@ export default function AuthorizedNavigator({ navigation, context }) {
         >
             <Tab.Screen name="Home" component={HomeScreen} />
             <Tab.Screen name="Search" component={SearchScreen} />
-            <Tab.Screen name="Settings" children={()=><SettingsScreen context={context}/>} />
-            <Tab.Screen name="Profile" children={()=><ProfileScreen context={context}/>} />
+            <Tab.Screen name="Settings" children={() => <SettingsScreen context={context} />} />
+            <Tab.Screen name="Profile" children={() => <ProfileScreen context={context}  />} />
         </Tab.Navigator>
     )
 }

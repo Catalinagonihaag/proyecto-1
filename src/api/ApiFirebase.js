@@ -47,16 +47,11 @@ export const ReadUserData = async (userId) => {
         if (snapshot.exists()) {
             return snapshot.val();
         } else {
-            AsyncStorage.getItem('userFirebase')
-                .then(user => JSON.parse(user))
-                .then(u => {
-                    console.log(u)
-                    let mail_analizado = /^([^]+)@(\w+).(\w+)$/.exec(u.email)
-                    WriteUserData(u.uid, mail_analizado[1], u.email, "").then(() => {
-                        return ReadUserData(userId)
-                    })
 
-                })
+            WriteUserData(userId, "", "", "").then(() => {
+                return ReadUserData(userId)
+            })
+
         }
     }).catch((error) => {
         console.error(error);

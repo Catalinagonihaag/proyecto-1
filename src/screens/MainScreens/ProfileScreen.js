@@ -15,28 +15,39 @@ import { theme } from '../../core/theme';
 import LoadingScreen from '../CommonScreens/LoadingScreen';
 
 
-const ProfileScreen = () => {
+const ProfileScreen = ({userId = ''}) => {
     const [user, setUser] = useState({})
     const [loading, setLoading] = useState(true)
 
-    useEffect(() => {
-        AsyncStorage.getItem('userFirebase')
-            .then(value => JSON.parse(value))
-            .then(user => {
-                ReadUserData(user.uid).then(userData => {
-                    console.log("ProfileScreen : UserData", userData)
-                    setUser({
-                        name: userData.username,
-                        description: userData.description,
-                        followers: userData.hasOwnProperty("followers") ? userData.followers.length : 0,
-                        following: (userData.hasOwnProperty("following") ? userData.following.length : 0),
-                        mutualFollows: userData.hasOwnProperty("mutualFollows") ? userData.mutualFollows : 0,
-
-                    })
-                    setLoading(false)
-
-                })
+    const ReadAndSetUser = (uid) => {
+        ReadUserData(uid).then(userData => {
+            console.log("ProfileScreen : UserData", userData)
+            setUser({
+                name: userData.username,
+                description: userData.description,
+                followers: userData.hasOwnProperty("followers") ? userData.followers.length : 0,
+                following: (userData.hasOwnProperty("following") ? userData.following.length : 0),
+                mutualFollows: userData.hasOwnProperty("mutualFollows") ? userData.mutualFollows : 0,
             })
+        })
+    }
+
+    useEffect(() => {
+        setLoading(true)
+        if (userId.length > 0) {
+            ReadAndSetUser(userId)
+            setLoading(false)
+        }
+        else {
+
+            AsyncStorage.getItem('userFirebase')
+                .then(value => JSON.parse(value))
+                .then(user => {
+                    ReadAndSetUser(user.uid)
+                    setLoading(false)
+                })
+        }
+
 
     }, [])
 
@@ -51,7 +62,7 @@ const ProfileScreen = () => {
                 <View style={styles.userInfoSection}>
                     <View style={{ flexDirection: 'row', marginTop: 15 }}>
                         <View style={styles.avatar}>
-                            <UserImage size={80}/>
+                            <UserImage size={80} optional_image={user.image_url} />
                         </View>
 
                         <View style={styles.userData}>

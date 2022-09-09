@@ -11,7 +11,7 @@ import { Avatar } from 'react-native-paper'
 import UserListItem from '../../components/UserListItem'
 import { TouchableOpacity } from 'react-native-gesture-handler'
 
-export default function SearchScreen({ navigation }) {
+export default function SearchScreen({ navigation, route }) {
   const [userList, setUserList] = useState([])
   const [search, setSearch] = useState('')
   const [hayResultados, setHayResultados] = useState(false)
@@ -19,6 +19,7 @@ export default function SearchScreen({ navigation }) {
 
   const onClickUserProfile = (userId) => {
     console.log('onClickUserProfile', userId)
+    navigation.jumpTo('Profile', { a: userId })
   }
   const onClickFollowButton = (userId) => {
     console.log('onClickFollowButton', userId)
