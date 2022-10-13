@@ -2,20 +2,13 @@ import React from 'react'
 
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Text, View } from 'react-native'
-import { ProfileScreen, SettingsScreen } from '../../screens/'
+import { HomeScreen, ProfileScreen, SettingsScreen } from '../../screens/'
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import SearchScreen from '../../screens/MainScreens/SearchScreen';
 
 
 const Tab = createBottomTabNavigator();
 
-function HomeScreen() {
-    return (
-        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-            <Text>Home!</Text>
-        </View>
-    );
-}
 
 
 export default function AuthorizedNavigator({ navigation, context }) {
@@ -44,7 +37,7 @@ export default function AuthorizedNavigator({ navigation, context }) {
                 }
             })}
         >
-            <Tab.Screen name="Home" component={HomeScreen} />
+            <Tab.Screen name="Home" children={() => <HomeScreen context={context} />} />
             <Tab.Screen name="Search" component={SearchScreen} />
             <Tab.Screen name="Settings" children={() => <SettingsScreen context={context} />} />
             <Tab.Screen name="Profile" children={() => <ProfileScreen context={context}  />} />
