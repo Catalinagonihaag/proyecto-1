@@ -5,6 +5,7 @@ import { Text, View } from 'react-native'
 import { HomeScreen, ProfileScreen, SettingsScreen } from '../../screens/'
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import SearchScreen from '../../screens/MainScreens/SearchScreen';
+import UploadPost from '../../screens/MainScreens/UploadPost';
 
 
 const Tab = createBottomTabNavigator();
@@ -23,6 +24,8 @@ export default function AuthorizedNavigator({ navigation, context }) {
 
                     if (route.name === 'Home') {
                         iconName = focused ? 'home' : 'home-outline';
+                    } else if (route.name === 'UploadPost') {
+                        iconName = focused ? 'add-circle' : 'add-circle-outline';
                     } else if (route.name === 'Settings') {
                         iconName = focused ? 'settings' : 'settings-outline';
                     } else if (route.name === 'Profile') {
@@ -38,9 +41,10 @@ export default function AuthorizedNavigator({ navigation, context }) {
             })}
         >
             <Tab.Screen name="Home" children={() => <HomeScreen context={context} />} />
+            <Tab.Screen options={{ title: 'Subir tu publicación' }} name='UploadPost' children={() => <UploadPost context={context} />} />
             <Tab.Screen name="Search" component={SearchScreen} />
             <Tab.Screen name="Settings" children={() => <SettingsScreen context={context} />} />
-            <Tab.Screen name="Profile" children={() => <ProfileScreen context={context}  />} />
+            <Tab.Screen name="Profile" children={() => <ProfileScreen context={context} />} />
         </Tab.Navigator>
     )
 }

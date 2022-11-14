@@ -7,9 +7,15 @@ import { SafeAreaView } from 'react-native';
 import { theme } from '../../core/theme';
 import UserImage from '../../components/UserComponents/UserImage';
 import TextInput from '../../components/TextInput';
+import { useMemo } from 'react';
 
-export default function SettingsScreen({ navigation , context }) {
+export default function SettingsScreen({ navigation, context }) {
     const { signOut } = useContext(context);
+
+    const user = useMemo(() => {
+        AsyncStorage.getItem('userFirebase')
+            .then(v => console.log(v))
+    }, [])
 
     const onPressLogOutButton = async () => {
         AsyncStorage.removeItem("userToken")
@@ -22,7 +28,7 @@ export default function SettingsScreen({ navigation , context }) {
         <SafeAreaView style={theme.appContainer}>
             <Background>
                 <UserImage size={120} />
-                 <TextInput
+                <TextInput
                     label="name"
                     value="user.name"
                 />
@@ -30,11 +36,11 @@ export default function SettingsScreen({ navigation , context }) {
                     label="username"
                     value="user.username"
                 />
-                 <TextInput
+                <TextInput
                     label="password"
                     value="confirm password"
                 />
-                 <TextInput
+                <TextInput
                     label="confirm password"
                     value="confirm password"
                 />

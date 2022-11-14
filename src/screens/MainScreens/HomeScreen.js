@@ -3,8 +3,9 @@ import React, { useState, useEffect } from "react";
 import { Box, FlatList, Center, NativeBaseProvider, Text, extendTheme } from "native-base";
 import { StyleSheet, View } from "react-native";
 import { maxWidth } from "styled-system";
-const theme = extendTheme({ width: '100%' });
 const HomeScreen = () => {
+    const theme = extendTheme({ width: '100%' });
+
     const [data, setData] = useState([]);
     const [loading, setLoading] = useState(true);
     useEffect(() => {
@@ -33,7 +34,7 @@ const HomeScreen = () => {
                 {data && (
                     <FlatList
                         style={styles.list}
-                        
+
                         data={data}
                         renderItem={renderItem}
                         keyExtractor={(item) => item.id.toString()}
