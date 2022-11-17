@@ -39,8 +39,14 @@ export default function UploadPost({ navigation, context }) {
             title: title,
             description: description,
         }
-        await postPost(uid, data);
+        await postPost(uid, data).then(() => {
+            console.log('Post subido');
+        })
+        .catch((error) => {
+            console.log(error)
+        })
     }
+    
 
 
   return (
