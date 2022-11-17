@@ -56,7 +56,7 @@ export default function App() {
 
                 return LoginWithEmailAndPassword(data.email, data.password)
                     .then((data) => {
-                        AsyncStorage.setItem('userFirebase', JSON.stringify(data.user))
+                        AsyncStorage.setItem('userFirebase', JSON.stringify(data.user));
                         AsyncStorage.setItem('userToken', data.user.accessToken)
 
                         dispatch({ type: 'SIGN_IN', token: data.user.accessToken })
