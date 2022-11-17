@@ -5,20 +5,22 @@ import TextInput from '../../components/TextInput'
 import { style } from 'styled-system'
 import Icon from 'react-native-vector-icons/Feather'
 import { TouchableHighlight } from 'react-native'
-import AsyncStorage from '@react-native-async-storage/async-storage'
+import AsyncStorage from '@react-native-async-storage/async-storage' 
 import { postPost } from '../../api/ApiFirebase'
 
+//lo que muestra la app
 export default function UploadPost({ navigation, context }) {
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
   const [uid, setUid] = useState('')
 
+  //guarda des y max caract
   const handleChangeDesc = (e) => {
     if (e.length <= 150) {
       setDescription(e)
     }
   }
-
+//pide los datos de usuario en fb
   const getUser = async () => {
     try {
       const value = await AsyncStorage.getItem('userFirebase')
@@ -30,6 +32,7 @@ export default function UploadPost({ navigation, context }) {
     }
   }
 
+  //pide que se traiga solo id del usuario
   getUser().then((data) => {
     setUid(data.uid);
   })
@@ -39,6 +42,8 @@ export default function UploadPost({ navigation, context }) {
             title: title,
             description: description,
         }
+
+        //se va a subir los datos y el usuario
         await postPost(uid, data).then(() => {
             console.log('Post subido');
         })
