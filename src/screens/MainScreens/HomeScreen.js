@@ -1,8 +1,9 @@
 
 import React, { useState, useEffect } from "react";
 import { Box, FlatList, Center, NativeBaseProvider, Text, extendTheme } from "native-base";
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, View, Image } from "react-native";
 import { maxWidth } from "styled-system";
+import { getAllPosts, ReadUserData } from "../../api/ApiFirebase";
 const HomeScreen = () => {
     const theme = extendTheme({ width: '100%' });
 
@@ -13,15 +14,24 @@ const HomeScreen = () => {
     }, []);
 
     const fetchData = async () => {
-        const resp = await fetch("https://api.sampleapis.com/coffee/hot");
-        const data = await resp.json();
+        const data = await getAllPosts()
+        console.log(data)
         setData(data);
         setLoading(false);
     };
+
     const renderItem = ({ item }) => {
+
+        
+
         return (
-            <View style={styles.item}>
-                <Text>{item.title}</Text>
+            <View >
+                <View>
+                    <Image src={{uri: item.user.image_url}} style={{width: 50, height: 50}}/>
+                    <Text>{item.user.username}</Text>
+                </View>
+                <Text>{item.post.title}</Text>
+                <Text>{item.post.description}</Text>
             </View>
         );
     };
@@ -37,7 +47,7 @@ const HomeScreen = () => {
 
                         data={data}
                         renderItem={renderItem}
-                        keyExtractor={(item) => item.id.toString()}
+                        keyExtractor={(item) => item.id}
                     />
                 )}
             </View>

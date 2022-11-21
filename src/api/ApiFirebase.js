@@ -6,6 +6,10 @@ import {
 } from 'firebase/auth'
 import { initializeApp } from 'firebase/app'
 import { getDatabase, ref, set, get, child, update, push } from 'firebase/database'
+import { doc, setDoc, getFirestore, collection, query, where, getDocs  } from "firebase/firestore"; 
+import { initializeFirestore  } from 'firebase/firestore';
+
+import { v4 as uuidv4 } from 'uuid'
 
 const firebaseConfig = {
   apiKey: 'AIzaSyD9Y7A-NBwExsXtDySImWPn2sjnPY5Pq8I',
@@ -19,6 +23,8 @@ const firebaseConfig = {
 }
 
 const app = initializeApp(firebaseConfig)
+
+
 
 export const RegisterUser = async (name, email, password) => {
   const data = await createUserWithEmailAndPassword(getAuth(), email, password)
@@ -79,15 +85,39 @@ export const GetUserList = async (userId) => {
 }
 
 export const postPost = async (userId, post) => {
-  const db = ref(getDatabase(app))
+  const db = getFirestore(app)
 
-  const newPostKey = push(child(ref(db), `posts/${userId}`)).key
+  const resp = await ReadUserData(userId)
+  console.log(resp);
+  
+  await setDoc(doc(db, "posts", uuidv4()), {
+    user: {
+      userId,
+      ...resp
+    },
+    post,
+    id: uuidv4()
+  });
+  
 
-  const updates = {}
-  updates[`/posts/${userId}` + newPostKey] = post
-  updates['/users/' + userId + '/' + newPostKey] = post
-  return update(ref(db), updates)
 }
+
+export const getAllPosts = async () => {
+  const db = getFirestore(app)
+
+  const q = query(collection(db, "posts"))
+
+  const querySnapshot = await getDocs(q);
+
+  
+  let data = []
+  await querySnapshot.forEach((doc) => {
+    data.push(doc.data());
+  });
+
+  return data
+}
+
 
 export const getPost = async (userId) => {
   const db = ref(getDatabase(app))
@@ -104,17 +134,3 @@ export const getPost = async (userId) => {
     })
 }
 
-export const getAllPosts = async () => {
-  const db = ref(getDatabase(app))
-  return get(child(db, `posts`))
-    .then((snapshot) => {
-      if (snapshot.exists()) {
-        return snapshot.val()
-      } else {
-        console.log('No data available')
-      }
-    })
-    .catch((error) => {
-      console.error(error)
-    })
-}

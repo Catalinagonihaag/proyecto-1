@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { StyleSheet, Dimensions, Text } from 'react-native'
+import { StyleSheet, Dimensions, Text, Image } from 'react-native'
 import { View } from 'native-base'
 import TextInput from '../../components/TextInput'
 import { style } from 'styled-system'
@@ -7,11 +7,16 @@ import Icon from 'react-native-vector-icons/Feather'
 import { TouchableHighlight } from 'react-native'
 import AsyncStorage from '@react-native-async-storage/async-storage' 
 import { postPost } from '../../api/ApiFirebase'
+import * as ImagePicker from 'expo-image-picker';
 
 //lo que muestra la app
 export default function UploadPost({ navigation, context }) {
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
+  const [image, setImage] = useState(null);
+  const [base64, setBase64] = useState(null);
+
+
   const [uid, setUid] = useState('')
 
   //guarda des y max caract
@@ -38,6 +43,29 @@ export default function UploadPost({ navigation, context }) {
   })
 
     const handleUpload = async () => {
+
+      if (base64) {
+        
+
+        
+        
+        
+
+        var requestOptions = {
+          method: 'POST',
+          body: {
+            key: '6d207e02198a847aa98d0a2a901485a5',
+            action: 'upload',
+            source: base64,
+          },
+        };
+
+        const imagenDevolvida = await fetch('https://freeimage.host/api/1/upload', requestOptions)
+
+        console.log(imagenDevolvida);
+      }
+      
+
         let data = {
             title: title,
             description: description,
@@ -51,11 +79,52 @@ export default function UploadPost({ navigation, context }) {
             console.log(error)
         })
     }
+
+  const takePicture = async() => {
+    let result = await ImagePicker.launchCameraAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      quality: 1,
+      base64: true
+    });
+
+    console.log(result);
+
+    if (!result.canceled) {
+      setImage(result.uri);
+    }
+  }
+
+  const getPicture = async() => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      quality: 1,
+      base64: true,
+    });
+
+    console.log(result);
+
+    if (!result.canceled) {
+      setImage(result.uri);
+      setBase64(result.base64)
+    }
+
+
+
+  }
     
 
 
   return (
     <View style={styles.container}>
+        {image && 
+        <>
+          <Text>Image preview</Text>
+          <Image source={{ uri: image }} style={{ width: 400, height: 200 }} />
+        </>
+        }
+
       <TextInput
         label="Title"
         value={title}
@@ -77,10 +146,10 @@ export default function UploadPost({ navigation, context }) {
           width: '100%',
         }}
       >
-        <TouchableHighlight style={styles.uploadBox}>
-          <Icon name="upload" size={50} />
+        <TouchableHighlight style={styles.uploadBox} onPress={() => takePicture()}>
+          <Icon name="camera" size={50} />
         </TouchableHighlight>
-        <TouchableHighlight style={styles.uploadBox}>
+        <TouchableHighlight style={styles.uploadBox} onPress={() => getPicture()}>
           <Icon name="upload" size={50} />
         </TouchableHighlight>
       </View>
