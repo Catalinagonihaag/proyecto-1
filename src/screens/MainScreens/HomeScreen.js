@@ -4,6 +4,8 @@ import { Box, FlatList, Center, NativeBaseProvider, Text, extendTheme } from "na
 import { StyleSheet, View, Image } from "react-native";
 import { maxWidth } from "styled-system";
 import { getAllPosts, ReadUserData } from "../../api/ApiFirebase";
+
+// error get 
 const HomeScreen = () => {
     const theme = extendTheme({ width: '100%' });
 
