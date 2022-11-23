@@ -5,7 +5,7 @@ import { StyleSheet, View, Image } from "react-native";
 import { maxWidth } from "styled-system";
 import { getAllPosts, ReadUserData } from "../../api/ApiFirebase";
 
-// error get 
+
 const HomeScreen = () => {
     const theme = extendTheme({ width: '100%' });
 
@@ -15,9 +15,9 @@ const HomeScreen = () => {
         fetchData()
     }, []);
 
+    // trea posteo
     const fetchData = async () => {
         const data = await getAllPosts()
-        console.log(data)
         setData(data);
         setLoading(false);
     };
@@ -25,7 +25,7 @@ const HomeScreen = () => {
     const renderItem = ({ item }) => {
 
         
-
+//sube
         return (
             <View >
                 <View>
