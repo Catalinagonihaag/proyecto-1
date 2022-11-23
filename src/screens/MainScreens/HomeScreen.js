@@ -20,7 +20,6 @@ const HomeScreen = () => {
         fetchData()
     }, []);
 
-<<<<<<< HEAD
     useEffect(() => {
         (async () => {
             const v = await AsyncStorage.getItem('userFirebase')
@@ -30,26 +29,17 @@ const HomeScreen = () => {
 
     const fetchData = async () => {
         const data = await getAllPosts()
+        setData(data)
         setComments(
             // make an object with the post id as key and an empty string as value
             Object.fromEntries(data.map(post => [post.id, undefined]))
         )
-=======
-    // trea posteo
-    const fetchData = async () => {
-        const data = await getAllPosts()
->>>>>>> 99e3b6ce49651b0a711e71164c5fe3a13b22f186
-        setData(data);
-        setLoading(false);
-    };
+        setLoading(false)
+        // trea posteo
+    }
+
 
     const renderItem = ({ item }) => {
-<<<<<<< HEAD
-=======
-
-        
-//sube
->>>>>>> 99e3b6ce49651b0a711e71164c5fe3a13b22f186
         return (
             <View >
                 <View>
@@ -86,7 +76,6 @@ const HomeScreen = () => {
             </View>
         );
     };
-
     return (
 
         <NativeBaseProvider theme={theme}>
@@ -133,5 +122,4 @@ const styles = StyleSheet.create({
     },
 
 });
-
 export default HomeScreen;

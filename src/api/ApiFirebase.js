@@ -87,24 +87,7 @@ export const GetUserList = async (userId) => {
 export const postPost = async (userId, post) => {
     const db = getFirestore(app)
 
-<<<<<<< HEAD
     const resp = await ReadUserData(userId)
-    console.log(resp);
-=======
-  //trae datos usuario
-  const resp = await ReadUserData(userId)
-  console.log(resp);
-  //crea post
-  await setDoc(doc(db, "posts", uuidv4()), {
-    user: {
-      userId,
-      ...resp
-    },
-    post,
-    id: uuidv4()
-  });
-  
->>>>>>> 99e3b6ce49651b0a711e71164c5fe3a13b22f186
 
     await setDoc(doc(db, "posts", uuidv4()), {
         user: {
