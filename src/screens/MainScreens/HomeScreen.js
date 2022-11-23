@@ -8,7 +8,7 @@ import TextInput from './../../components/TextInput';
 import Comment from "../../components/Comment";
 
 
-// error get 
+
 const HomeScreen = () => {
     const theme = extendTheme({ width: '100%' });
 
@@ -20,6 +20,7 @@ const HomeScreen = () => {
         fetchData()
     }, []);
 
+<<<<<<< HEAD
     useEffect(() => {
         (async () => {
             const v = await AsyncStorage.getItem('userFirebase')
@@ -33,11 +34,22 @@ const HomeScreen = () => {
             // make an object with the post id as key and an empty string as value
             Object.fromEntries(data.map(post => [post.id, undefined]))
         )
+=======
+    // trea posteo
+    const fetchData = async () => {
+        const data = await getAllPosts()
+>>>>>>> 99e3b6ce49651b0a711e71164c5fe3a13b22f186
         setData(data);
         setLoading(false);
     };
 
     const renderItem = ({ item }) => {
+<<<<<<< HEAD
+=======
+
+        
+//sube
+>>>>>>> 99e3b6ce49651b0a711e71164c5fe3a13b22f186
         return (
             <View >
                 <View>
