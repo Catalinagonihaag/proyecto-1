@@ -1,39 +1,76 @@
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo, useRef } from "react";
 import { Box, FlatList, Center, NativeBaseProvider, Text, extendTheme } from "native-base";
-import { StyleSheet, View, Image } from "react-native";
-import { maxWidth } from "styled-system";
-import { getAllPosts, ReadUserData } from "../../api/ApiFirebase";
+import { StyleSheet, View, Image, Button } from "react-native";
+import { commentPost, getAllPosts, likePost, ReadUserData } from "../../api/ApiFirebase";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import TextInput from './../../components/TextInput';
+import Comment from "../../components/Comment";
+
 
 // error get 
 const HomeScreen = () => {
     const theme = extendTheme({ width: '100%' });
 
     const [data, setData] = useState([]);
+    const [userId, setUserId] = useState('');
     const [loading, setLoading] = useState(true);
+    const [comments, setComments] = useState([]);
     useEffect(() => {
         fetchData()
     }, []);
 
+    useEffect(() => {
+        (async () => {
+            const v = await AsyncStorage.getItem('userFirebase')
+            setUserId(JSON.parse(v).uid)
+        })()
+    }, [])
+
     const fetchData = async () => {
         const data = await getAllPosts()
-        console.log(data)
+        setComments(
+            // make an object with the post id as key and an empty string as value
+            Object.fromEntries(data.map(post => [post.id, undefined]))
+        )
         setData(data);
         setLoading(false);
     };
 
     const renderItem = ({ item }) => {
-
-        
-
         return (
             <View >
                 <View>
-                    <Image src={{uri: item.user.image_url}} style={{width: 50, height: 50}}/>
+                    <Image src={{ uri: item.user.image_url }} style={{ width: 50, height: 50 }} />
                     <Text>{item.user.username}</Text>
                 </View>
                 <Text>{item.post.title}</Text>
                 <Text>{item.post.description}</Text>
+                <Button title="Like Post" onPress={() => likePost(userId, item.id)} />
+                <View style={{ flexDirection: 'row' }}>
+                    <View style={{ width: '80%' }}>
+                        <TextInput
+                            label="Comment"
+                            returnKeyType="next"
+                            value={comments[item.id] || ''}
+                            onChangeText={(text) => setComments(
+                                // update the comment for the post
+                                { ...comments, [item.id]: text }
+                            )}
+                            error={false}
+                            errorText={''}
+                            autoCapitalize="true"
+                        />
+                    </View>
+                    <Button title="Comment" onPress={() => commentPost(userId, item.id, comments[item.id])} style={{ height: '100%' }} />
+                </View>
+                {
+                    item.post.comments.map((comment, i) => {
+                        return (
+                            <Comment comment={comment} key={i} />
+                        )
+                    })
+                }
             </View>
         );
     };
@@ -65,10 +102,11 @@ const styles = StyleSheet.create({
     },
 
     container: {
-        width: '100%',
+        flex: 1,
         backgroundColor: '#fff',
         alignItems: 'center',
         justifyContent: 'center',
+        paddingBottom: 20,
     },
     item: {
         backgroundColor: "cyan",
