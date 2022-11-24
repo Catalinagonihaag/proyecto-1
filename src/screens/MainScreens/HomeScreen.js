@@ -76,6 +76,7 @@ const HomeScreen = () => {
                     {item.post.description}
                 </Text>
                 <View style={{ marginTop: 20 }}>
+                    <View style={{flexDirection: 'row', alignItems: 'center'}}>
                     <TouchableOpacity
                         onPress={() => likePost(userId, item.id, item.post.likes)}
                         style={{
@@ -86,7 +87,7 @@ const HomeScreen = () => {
                     >
                         <Icon name={item.post.likes.includes(userId) ? "heart" : "heart-outlined"} color="#f00" size={30} />
                     </TouchableOpacity>
-                    <Text>Likes {item.post.likes.length}</Text>
+                    <Text>{item.post.likes.length == 1 ? item.post.likes.length + " Like" : item.post.likes.length + " Likes"}</Text></View>
                     <View style={{ flexDirection: 'row', width: '100%' }}>
                         <View>
                             <TextInput
