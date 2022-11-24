@@ -41,7 +41,7 @@ export default function AuthorizedNavigator({ navigation, context }) {
             })}
         >
             <Tab.Screen name="Home" children={() => <HomeScreen context={context} />} />
-            <Tab.Screen options={{ title: 'Subir tu publicación' }} name='UploadPost' children={() => <UploadPost context={context} />} />
+            <Tab.Screen options={{ title: 'Upload post' }} name='UploadPost' children={() => <UploadPost context={context} />} />
             <Tab.Screen name="Search" component={SearchScreen} />
             <Tab.Screen name="Settings" children={() => <SettingsScreen context={context} />} />
             <Tab.Screen name="Profile" children={() => <ProfileScreen context={context} />} />

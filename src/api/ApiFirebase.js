@@ -6,7 +6,7 @@ import {
 } from 'firebase/auth'
 import { initializeApp } from 'firebase/app'
 import { getDatabase, ref, set, get, child, update, push } from 'firebase/database'
-import { doc, setDoc, getFirestore, collection, query, arrayUnion, getDocs, updateDoc } from "firebase/firestore";
+import { doc, setDoc, getFirestore, collection, query, arrayUnion, getDocs, updateDoc, arrayRemove } from "firebase/firestore";
 
 import { v4 as uuidv4 } from 'uuid'
 
@@ -103,12 +103,20 @@ export const postPost = async (userId, post) => {
     });
 }
 
-export const likePost = async (userId, postId) => {
+export const likePost = async (userId, postId, postLikes) => {
     const db = getFirestore(app)
 
-    await updateDoc(doc(db, "posts", postId), {
+    if (postLikes.includes(userId) ){
+        await updateDoc(doc(db, "posts", postId), {
+            "post.likes": arrayRemove(userId)
+        });
+     }
+     else {
+        await updateDoc(doc(db, "posts", postId), {
         "post.likes": arrayUnion(userId)
     });
+     }
+    
 }
 
 export const commentPost = async (userId, postId, comment) => {
