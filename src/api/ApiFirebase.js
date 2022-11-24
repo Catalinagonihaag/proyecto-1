@@ -21,9 +21,9 @@ const firebaseConfig = {
     databaseURL: 'https://hss-2d0af-default-rtdb.firebaseio.com',
 }
 
-const app = initializeApp(firebaseConfig)
+export const app = initializeApp(firebaseConfig)
 
-
+export const db = getFirestore(app);
 
 export const RegisterUser = async (name, email, password) => {
     const data = await createUserWithEmailAndPassword(getAuth(), email, password)
@@ -106,17 +106,17 @@ export const postPost = async (userId, post) => {
 export const likePost = async (userId, postId, postLikes) => {
     const db = getFirestore(app)
 
-    if (postLikes.includes(userId) ){
+    if (postLikes.includes(userId)) {
         await updateDoc(doc(db, "posts", postId), {
             "post.likes": arrayRemove(userId)
         });
-     }
-     else {
+    }
+    else {
         await updateDoc(doc(db, "posts", postId), {
-        "post.likes": arrayUnion(userId)
-    });
-     }
-    
+            "post.likes": arrayUnion(userId)
+        });
+    }
+
 }
 
 export const commentPost = async (userId, postId, comment) => {
