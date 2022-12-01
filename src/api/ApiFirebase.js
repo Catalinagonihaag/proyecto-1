@@ -35,63 +35,63 @@ export const LoginWithEmailAndPassword = (email, password) => {
     return signInWithEmailAndPassword(getAuth(), email, password)
 }
 
-export const followUser = async(userId, userLoggedId) => {
+export const followUser = async (userId, userLoggedId) => {
     try {
         const db = getFirestore(app)
 
         // userId user to follow
         // userLoggedId userto to put following user id 
-    
-        
+
+
         const table = doc(db, `users/${userLoggedId}`)
-        const tableData =  (await getDoc(table)).data()
-        
+        const tableData = (await getDoc(table)).data()
+
         let followingIncerted = tableData.following
-    
-        if (!followingIncerted.includes(userLoggedId)) {
-            followingIncerted.push(userLoggedId) 
+
+        if (!followingIncerted.includes(userId)) {
+            followingIncerted.push(userId)
         } else {
-            const newArr = followingIncerted.filter((id) => id !== userLoggedId)
+            const newArr = followingIncerted.filter((id) => id !== userId)
             followingIncerted = newArr
             console.log(followingIncerted);
         }
-    
+
         await updateDoc(table, {
             "following": [...followingIncerted]
         })
-        
-    
-    
+
+
+
         // fijarse si esta el follow si esta sacarlo sino agregarlo
-    
-    
-        
-        
-    
+
+
+
+
+
         const table2 = doc(db, `users/${userId}`)
-        const tableData2 =  (await getDoc(table2)).data()
+        const tableData2 = (await getDoc(table2)).data()
 
         let followIncerted = tableData2.followers
 
         if (!followIncerted.includes(userLoggedId)) {
-            followIncerted.push(userLoggedId) 
+            followIncerted.push(userLoggedId)
         } else {
             const newArr = followIncerted.filter((id) => id !== userLoggedId)
             followIncerted = newArr
         }
-    
+
         await updateDoc(table2, {
             "followers": [...followIncerted]
         })
 
-    
+
         // fijarse si esta el follow si esta sacarlo sino agregarlo 
     } catch (error) {
-        console.log(error);
+        console.error(error);
     }
-    
 
-    
+
+
 
 }
 
@@ -139,14 +139,14 @@ export const GetUserList = async (userId) => {
                     jsonUsers[doc.id] = doc.data()
                 }
             });
-              
+
         }
 
         return jsonUsers
     } catch (error) {
         console.log(error);
     }
-    
+
 }
 //subir
 export const postPost = async (userId, post) => {
