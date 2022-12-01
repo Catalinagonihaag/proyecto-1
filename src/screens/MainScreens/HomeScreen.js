@@ -36,7 +36,7 @@ const HomeScreen = () => {
         })()
         const db = getFirestore(app)
         const unsuscribe = onSnapshot(collection(db, `posts`), (snapshot) => {
-
+            
             const data = snapshot.docs
 
             setComments(

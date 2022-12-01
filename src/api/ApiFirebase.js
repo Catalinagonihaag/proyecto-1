@@ -5,8 +5,9 @@ import {
     signInWithEmailAndPassword,
 } from 'firebase/auth'
 import { initializeApp } from 'firebase/app'
-import { getDatabase, ref, set, get, child, update, push } from 'firebase/database'
-import { doc, setDoc, getFirestore, collection, query, arrayUnion, getDocs, updateDoc, arrayRemove } from "firebase/firestore";
+// import { getDatabase, ref, set, get, child, update, push } from 'firebase/database'
+import { doc, setDoc, getFirestore, collection, query, arrayUnion, getDocs, updateDoc, arrayRemove, getDoc } from "firebase/firestore";
+
 
 import { v4 as uuidv4 } from 'uuid'
 
@@ -34,23 +35,85 @@ export const LoginWithEmailAndPassword = (email, password) => {
     return signInWithEmailAndPassword(getAuth(), email, password)
 }
 
+export const followUser = async(userId, userLoggedId) => {
+    try {
+        const db = getFirestore(app)
+
+        // userId user to follow
+        // userLoggedId userto to put following user id 
+    
+        
+        const table = doc(db, `users/${userLoggedId}`)
+        const tableData =  (await getDoc(table)).data()
+        
+        let followingIncerted = tableData.following
+    
+        if (!followingIncerted.includes(userLoggedId)) {
+            followingIncerted.push(userLoggedId) 
+        } else {
+            const newArr = followingIncerted.filter((id) => id !== userLoggedId)
+            followingIncerted = newArr
+            console.log(followingIncerted);
+        }
+    
+        await updateDoc(table, {
+            "following": [...followingIncerted]
+        })
+        
+    
+    
+        // fijarse si esta el follow si esta sacarlo sino agregarlo
+    
+    
+        
+        
+    
+        const table2 = doc(db, `users/${userId}`)
+        const tableData2 =  (await getDoc(table2)).data()
+
+        let followIncerted = tableData2.followers
+
+        if (!followIncerted.includes(userLoggedId)) {
+            followIncerted.push(userLoggedId) 
+        } else {
+            const newArr = followIncerted.filter((id) => id !== userLoggedId)
+            followIncerted = newArr
+        }
+    
+        await updateDoc(table2, {
+            "followers": [...followIncerted]
+        })
+
+    
+        // fijarse si esta el follow si esta sacarlo sino agregarlo 
+    } catch (error) {
+        console.log(error);
+    }
+    
+
+    
+
+}
+
 export const WriteUserData = async (userId, name, email, image_url = '') => {
-    const db = getDatabase(app)
-    await set(ref(db, 'users/' + userId), {
+    const db = getFirestore(app)
+    await setDoc(doc(db, 'users/' + userId), {
         username: name,
         email: email,
         image_url: image_url,
         description: '',
+        followers: [],
+        following: []
     })
 }
 
 //trae usuario
 export const ReadUserData = async (userId) => {
-    const db = ref(getDatabase(app))
-    return get(child(db, `users/${userId}`))
+    const db = getFirestore(app)
+    return getDoc(doc(db, `users/${userId}`))
         .then((snapshot) => {
             if (snapshot.exists()) {
-                return snapshot.val()
+                return snapshot.data()
             } else {
                 WriteUserData(userId, '', '', '').then(() => {
                     return ReadUserData(userId)
@@ -63,31 +126,35 @@ export const ReadUserData = async (userId) => {
 }
 
 export const GetUserList = async (userId) => {
-    const db = ref(getDatabase(app))
-    let jsonUsers = {}
-    return get(child(db, `users`))
-        .then((snapshot) => {
-            if (snapshot.exists()) {
-                //console.log(snapshot.val(), userId)
-                for (const [key, value] of Object.entries(snapshot.val())) {
-                    if (key != userId) {
-                        jsonUsers[key] = value
-                    }
+
+    try {
+        const db = getFirestore(app)
+        let jsonUsers = {}
+        const querySnapshot = await getDocs(query(collection(db, `users`)))
+
+        if (!querySnapshot.empty) {
+            querySnapshot.forEach((doc) => {
+
+                if (doc.id != userId) {
+                    jsonUsers[doc.id] = doc.data()
                 }
-                return jsonUsers
-            } else {
-                console.log('No data available')
-            }
-        })
-        .catch((error) => {
-            console.error(error)
-        })
+            });
+              
+        }
+
+        return jsonUsers
+    } catch (error) {
+        console.log(error);
+    }
+    
 }
 //subir
 export const postPost = async (userId, post) => {
     const db = getFirestore(app)
 
     const resp = await ReadUserData(userId)
+
+    console.log(resp);
 
     await setDoc(doc(db, "posts", uuidv4()), {
         user: {
@@ -155,7 +222,7 @@ export const getAllPosts = async () => {
 
 
 export const getPost = async (userId) => {
-    const db = ref(getDatabase(app))
+    const db = getFirestore(app)
     return get(child(db, `posts/${userId}`))
         .then((snapshot) => {
             if (snapshot.exists()) {
@@ -168,4 +235,3 @@ export const getPost = async (userId) => {
             console.error(error)
         })
 }
-
