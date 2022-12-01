@@ -7,6 +7,7 @@ import {
 import { initializeApp } from 'firebase/app'
 // import { getDatabase, ref, set, get, child, update, push } from 'firebase/database'
 import { doc, setDoc, getFirestore, collection, query, arrayUnion, getDocs, updateDoc, arrayRemove, getDoc } from "firebase/firestore";
+import { getStorage, ref, uploadString, getDownloadURL } from "firebase/storage";
 
 
 import { v4 as uuidv4 } from 'uuid'
@@ -15,7 +16,7 @@ const firebaseConfig = {
     apiKey: 'AIzaSyD9Y7A-NBwExsXtDySImWPn2sjnPY5Pq8I',
     authDomain: 'hss-2d0af.firebaseapp.com',
     projectId: 'hss-2d0af',
-    storageBucket: 'hss-2d0af.appspot.com',
+    storageBucket: 'gs://hss-2d0af.appspot.com/',
     messagingSenderId: '993924137747',
     appId: '1:993924137747:web:fc2f3003f93df2c41750e6',
     measurementId: 'G-40LW453GJ8',
@@ -23,8 +24,24 @@ const firebaseConfig = {
 }
 
 export const app = initializeApp(firebaseConfig)
-
 export const db = getFirestore(app);
+export const storage = getStorage(app)
+
+
+export const uploadImageStorage = async(img, id) => {
+    const storageRef = ref(storage, id + '.png')
+    const { metadata } = await uploadString(storageRef, img, 'base64')
+    console.log(metadata);
+
+    return metadata
+}
+
+export const getImageFromStorage = async(id) => {
+    console.log(id);
+    const resp = await getDownloadURL(ref(storage, id + '.png'))
+    console.log(resp);
+    return resp
+}
 
 export const RegisterUser = async (name, email, password) => {
     const data = await createUserWithEmailAndPassword(getAuth(), email, password)
@@ -35,63 +52,63 @@ export const LoginWithEmailAndPassword = (email, password) => {
     return signInWithEmailAndPassword(getAuth(), email, password)
 }
 
-export const followUser = async(userId, userLoggedId) => {
+export const followUser = async (userId, userLoggedId) => {
     try {
         const db = getFirestore(app)
 
         // userId user to follow
         // userLoggedId userto to put following user id 
-    
-        
+
+
         const table = doc(db, `users/${userLoggedId}`)
-        const tableData =  (await getDoc(table)).data()
-        
+        const tableData = (await getDoc(table)).data()
+
         let followingIncerted = tableData.following
-    
-        if (!followingIncerted.includes(userLoggedId)) {
-            followingIncerted.push(userLoggedId) 
+
+        if (!followingIncerted.includes(userId)) {
+            followingIncerted.push(userId)
         } else {
-            const newArr = followingIncerted.filter((id) => id !== userLoggedId)
+            const newArr = followingIncerted.filter((id) => id !== userId)
             followingIncerted = newArr
             console.log(followingIncerted);
         }
-    
+
         await updateDoc(table, {
             "following": [...followingIncerted]
         })
-        
-    
-    
+
+
+
         // fijarse si esta el follow si esta sacarlo sino agregarlo
-    
-    
-        
-        
-    
+
+
+
+
+
         const table2 = doc(db, `users/${userId}`)
-        const tableData2 =  (await getDoc(table2)).data()
+        const tableData2 = (await getDoc(table2)).data()
 
         let followIncerted = tableData2.followers
 
         if (!followIncerted.includes(userLoggedId)) {
-            followIncerted.push(userLoggedId) 
+            followIncerted.push(userLoggedId)
         } else {
             const newArr = followIncerted.filter((id) => id !== userLoggedId)
             followIncerted = newArr
         }
-    
+
         await updateDoc(table2, {
             "followers": [...followIncerted]
         })
 
-    
+
         // fijarse si esta el follow si esta sacarlo sino agregarlo 
     } catch (error) {
-        console.log(error);
+        console.error(error);
     }
-    
 
-    
+
+
 
 }
 
@@ -139,24 +156,24 @@ export const GetUserList = async (userId) => {
                     jsonUsers[doc.id] = doc.data()
                 }
             });
-              
+
         }
 
         return jsonUsers
     } catch (error) {
         console.log(error);
     }
-    
+
 }
 //subir
-export const postPost = async (userId, post) => {
+export const postPost = async (userId, post, id) => {
     const db = getFirestore(app)
 
     const resp = await ReadUserData(userId)
 
     console.log(resp);
 
-    await setDoc(doc(db, "posts", uuidv4()), {
+    await setDoc(doc(db, "posts", id), {
         user: {
             userId,
             ...resp
@@ -166,7 +183,7 @@ export const postPost = async (userId, post) => {
             likes: [],
             comments: [],
         },
-        id: uuidv4()
+        id: id
     });
 }
 

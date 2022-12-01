@@ -5,6 +5,8 @@ import UserImage from './UserComponents/UserImage';
 
 export default function UserListItem({ image_url, username, followStatusName, onPressFollow, onPressAvatar }) {
     const miUser = username ? username : 'UserNameNotFound'
+    const follow = followStatusName === 'Follow'
+    console.log(username, followStatusName);
     return (
 
         <View style={styles.userItem} onPress={() => { console.log("press") }} >
@@ -14,7 +16,7 @@ export default function UserListItem({ image_url, username, followStatusName, on
             <View style={styles.userData}>
                 <Text style={[styles.title, { fontSize: 20 }]}>{miUser}</Text>
 
-                <Button style={styles.followStatus} onPress={onPressFollow} labelStyle={{ fontSize: 10, height: '100%', top: 7 }} color='white'>{followStatusName}</Button>
+                <Button style={[styles.followStatus, { backgroundColor: follow ? '#fff' : '#4e81df', borderColor: follow ? '#4e81df' : '#fff' }]} onPress={onPressFollow} labelStyle={{ fontSize: 10, height: '100%' }} color={follow ? '#4e81df' : '#fff'}>{followStatusName}</Button>
 
             </View>
         </View >
@@ -48,13 +50,11 @@ const styles = StyleSheet.create({
 
     },
     followStatus: {
-        backgroundColor: '#4e81df',
         width: 100,
         height: 30,
         borderRadius: 20,
-        display: 'flex',
-        justifyContent: 'center',
         alignItems: 'center',
+        borderWidth: 1,
     },
 
 

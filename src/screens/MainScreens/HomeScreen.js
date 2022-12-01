@@ -14,6 +14,8 @@ import {
     getAllPosts,
     likePost,
     app,
+    ReadUserData,
+    getImageFromStorage
 } from '../../api/ApiFirebase'
 import Icon from '@expo/vector-icons/Entypo'
 import AsyncStorage from '@react-native-async-storage/async-storage'
@@ -30,12 +32,20 @@ const HomeScreen = () => {
     const [comments, setComments] = useState([])
 
     useEffect(() => {
-        (async () => {
+        
+        const db = getFirestore(app)
+
+
+
+        const unsuscribe = onSnapshot(collection(db, `posts`), async (snapshot) => {
+
+
             const v = await AsyncStorage.getItem('userFirebase')
             setUserId(JSON.parse(v).uid)
-        })()
-        const db = getFirestore(app)
-        const unsuscribe = onSnapshot(collection(db, `posts`), (snapshot) => {
+            
+            const user = await ReadUserData(JSON.parse(v).uid)
+           
+            console.log(user)
             
             const data = snapshot.docs
 
@@ -45,14 +55,29 @@ const HomeScreen = () => {
             )
 
             const posts = [];
-            data.forEach((doc) => {
+
+            for (const doc of data){
                 const post = doc.data();
                 post.id = doc.id;
                 post.post.comments = post.post.comments ?? []
                 post.post.likes = post.post.likes ?? []
+                if (user.following.includes(post.user.userId) || post.user.userId === JSON.parse(v).uid)
+                {
+                if (post.post.img){
+                    console.log('====================================');
+                    console.log(post);
+                    console.log('====================================');
+                    post.imageUrl = await getImageFromStorage(post.post.img.id)
+                }
+                
                 posts.push(post);
-            });
 
+                }
+            }
+
+            console.log('====================================');
+            console.log(posts);
+            console.log('====================================');
             setData(posts);
             setLoading(false);
         })
@@ -60,6 +85,9 @@ const HomeScreen = () => {
     }, [])
 
     const renderItem = ({ item }) => {
+        console.log('====================================');
+        console.log(item);
+        console.log('====================================');
         return (
             <View style={styles.card}>
                 <View>
@@ -72,6 +100,9 @@ const HomeScreen = () => {
                 <Text style={{ alignSelf: 'flex-start', fontSize: 18 }}>
                     {item.post.title}
                 </Text>
+                {item.imageUrl && (
+                <View style={{width: '100%', height: 200}}>
+                <Image style={{flex:1, resizeMode: 'contain'}} source={{uri:item.imageUrl}} /></View>)}
                 <Text style={{ alignSelf: 'flex-start', fontSize: 16, marginTop: 10 }}>
                     {item.post.description}
                 </Text>

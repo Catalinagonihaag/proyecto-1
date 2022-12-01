@@ -10,208 +10,211 @@ import { Avatar } from 'react-native-paper'
 import UserListItem from '../../components/UserListItem'
 import { TouchableOpacity } from 'react-native-gesture-handler'
 import { FlatList } from 'native-base'
-import { followUser, GetUserList } from '../../api/ApiFirebase'
+import { followUser, GetUserList, app } from '../../api/ApiFirebase'
+import { collection, onSnapshot, getFirestore } from 'firebase/firestore'
+
 
 export default function SearchScreen({ navigation, route }) {
-  const [userList, setUserList] = useState([])
-  const [search, setSearch] = useState('')
-  const [hayResultados, setHayResultados] = useState(false)
-  const [userLoggedId, setUserLoggedId] = useState('')
+    const [userList, setUserList] = useState([])
+    const [search, setSearch] = useState('')
+    const [hayResultados, setHayResultados] = useState(false)
+    const [userLoggedId, setUserLoggedId] = useState('')
 
-  const onClickUserProfile = (userId) => {
-    console.log('onClickUserProfile', userId)
-    navigation.jumpTo('Profile', {
-      a: userId,
-    })
-  }
-  const onClickFollowButton = async (userId) => {
-      await followUser(userId, userLoggedId)
-  }
-
-  const getUserLoggedId = async () => {
-    const value = await AsyncStorage.getItem('userFirebase')
-    if (value === null) {
-      return null
+    const onClickUserProfile = (userId) => {
+        console.log('onClickUserProfile', userId)
+        navigation.jumpTo('Profile', {
+            a: userId,
+        })
     }
-    const {uid} = JSON.parse(value)
-    setUserLoggedId(uid)
-  }
 
-console.log('userLoggedId', userLoggedId);
+    const onClickFollowButton = async (userId) => {
+        await followUser(userId, userLoggedId)
+    }
 
-  useEffect(() => {
-    getUserLoggedId()
-    getUserList()
-
-  }, [])
-
-  const getUserList = () => {
-    AsyncStorage.getItem('userFirebase')
-      .then((user) => JSON.parse(user))
-      .then((user) => GetUserList(user.uid))
-      .then((dbUsers) => {
-        let users = []
-        for (const [key, value] of Object.entries(dbUsers)) {
-          users.push({
-            uid: key,
-            ...value,
-          })
+    const getUserLoggedId = async () => {
+        const value = await AsyncStorage.getItem('userFirebase')
+        if (value === null) {
+            return null
         }
-        console.log(users);
+        const { uid } = JSON.parse(value)
+        setUserLoggedId(uid)
+    }
 
-        setUserList(users)
-        setHayResultados(true)
-        
-      })
 
-  }
+    useEffect(() => {
+        const db = getFirestore(app)
+        const unsuscribe = onSnapshot(collection(db, `users`), (snapshot) => {
+            getUserLoggedId()
+            getUserList()
+        })
+        return () => unsuscribe();
+    }, [])
 
-  const RenderListUsers = ({ text }) => {
+    const getUserList = () => {
+        AsyncStorage.getItem('userFirebase')
+            .then((user) => JSON.parse(user))
+            .then((user) => GetUserList(user.uid))
+            .then((dbUsers) => {
+                let users = []
+                for (const [key, value] of Object.entries(dbUsers)) {
+                    users.push({
+                        uid: key,
+                        ...value,
+                    })
+                }
+                console.log(users);
 
+                setUserList(users)
+                setHayResultados(true)
+
+            })
+
+    }
+
+    const RenderListUsers = ({ text }) => {
+        return (
+            <FlatList
+                data={userList.filter((user) =>
+                    user.username.toLowerCase().includes(text.toLowerCase())
+                )}
+                contentContainerStyle={{
+                    flexGrow: 1,
+                }}
+                renderItem={({ item }) => (
+                    <UserListItem
+                        key={item.uid}
+                        image_url={item.image_url}
+                        username={item.username}
+                        followStatusName={item.followers.includes(userLoggedId) ? 'Unfollow' : 'Follow'}
+                        onPressFollow={() => onClickFollowButton(item.uid)}
+                        onPressAvatar={() => onClickUserProfile(item.uid)}
+                    />
+                )}
+                keyExtractor={(item) => item.uid}
+            />
+        )
+    }
 
     return (
-      <FlatList
-        data={userList.filter((user) =>
-          user.username.toLowerCase().includes(text.toLowerCase())
-        )}
-        contentContainerStyle={{
-          flexGrow: 1,
-        }}
-        renderItem={({ item }) => (
-          <UserListItem
-            key={item.uid}
-            image_url={item.image_url}
-            username={item.username}
-            followStatusName={item.followers.includes(userLoggedId) ? 'Unfollow' : 'Follow'}
-            onPressFollow={() => onClickFollowButton(item.uid)}
-            onPressAvatar={() => onClickUserProfile(item.uid)}
-          />
-        )}
-        keyExtractor={(item) => item.uid}
-      />
-    )
-  }
+        <SafeAreaView style={theme.appContainer}>
+            <Background style={styles.container}>
+                <View style={styles.searchSection}>
+                    <View
+                        style={{
+                            display: 'flex',
+                            flexDirection: 'row',
+                        }}
+                    >
+                        <Ionicons name={'search'} size={20} style={styles.iconSearchBox} />
+                        <TextInput
+                            onChangeText={(text) => setSearch(text)}
+                            style={styles.inputSearch}
+                            selectionColor={theme.colors.primary}
+                            underlineColor="transparent"
+                            mode="outlined"
+                            label="Search"
+                        />
+                    </View>
+                    <View style={styles.filtersButtons}>
+                        <TouchableOpacity onPress={getUserList}>
+                            <Button
+                                style={[
+                                    styles.buttonFilter,
+                                    {
+                                        backgroundColor: '#4e81df',
+                                        color: 'white',
+                                    },
+                                ]}
+                                mode={'outlined'}
+                                labelStyle={{
+                                    fontSize: 10,
+                                }}
+                            >
 
-  return (
-    <SafeAreaView style={theme.appContainer}>
-      <Background style={styles.container}>
-        <View style={styles.searchSection}>
-          <View
-            style={{
-              display: 'flex',
-              flexDirection: 'row',
-            }}
-          >
-            <Ionicons name={'search'} size={20} style={styles.iconSearchBox} />
-            <TextInput
-              onChangeText={(text) => setSearch(text)}
-              style={styles.inputSearch}
-              selectionColor={theme.colors.primary}
-              underlineColor="transparent"
-              mode="outlined"
-              label="Search"
-            />
-          </View>
-          <View style={styles.filtersButtons}>
-            <TouchableOpacity onPress={getUserList}>
-              <Button
-                style={[
-                  styles.buttonFilter,
-                  {
-                    backgroundColor: '#4e81df',
-                    color: 'white',
-                  },
-                ]}
-                mode={'outlined'}
-                labelStyle={{
-                  fontSize: 10,
-                }}
-              >
-                
-                Users
-              </Button>
-            </TouchableOpacity>
-            <Button
-              style={styles.buttonFilter}
-              labelStyle={{
-                fontSize: 10,
-              }}
-            >
-             
-              Hastags
-            </Button>
-            <Button
-              style={styles.buttonFilter}
-              labelStyle={{
-                fontSize: 10,
-              }}
-            >
-              
-              Posteos
-            </Button>
-          </View>
-        </View>
-        <View style={styles.resultsSection}>
-          
-          {hayResultados && (
-            <RenderListUsers text={search} />
-          )}
-        </View>
-      </Background>
-    </SafeAreaView>
-  )
+                                Users
+                            </Button>
+                        </TouchableOpacity>
+                        <Button
+                            style={styles.buttonFilter}
+                            labelStyle={{
+                                fontSize: 10,
+                            }}
+                        >
+
+                            Hastags
+                        </Button>
+                        <Button
+                            style={styles.buttonFilter}
+                            labelStyle={{
+                                fontSize: 10,
+                            }}
+                        >
+
+                            Posteos
+                        </Button>
+                    </View>
+                </View>
+                <View style={styles.resultsSection}>
+
+                    {hayResultados && (
+                        <RenderListUsers text={search} />
+                    )}
+                </View>
+            </Background>
+        </SafeAreaView>
+    )
 }
 const styles = StyleSheet.create({
-  container: {
-    width: '100%',
-    marginVertical: 12,
-  },
-  searchSection: {
-    borderBottomColor: '#dddddd',
-    borderBottomWidth: 1,
-    width: '80%',
-    flexDirection: 'column',
-  },
-  inputSearch: {
-    backgroundColor: theme.colors.surface,
-    width: '80%',
-    height: 30,
-    alignSelf: 'flex-end',
-    borderWidth: 0,
-  },
-  iconSearchBox: {
-    color: '#000',
-    alignSelf: 'center',
-  },
-  filtersButtons: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    width: '40%',
-    alignSelf: 'center',
-  },
-  buttonFilter: {
-    height: 40,
-    alignSelf: 'center',
-    marginHorizontal: 5,
-    borderWidth: 1,
-    borderColor: '#000',
-    borderRadius: 50,
-  },
+    container: {
+        width: '100%',
+        marginVertical: 12,
+    },
+    searchSection: {
+        borderBottomColor: '#dddddd',
+        borderBottomWidth: 1,
+        width: '80%',
+        flexDirection: 'column',
+    },
+    inputSearch: {
+        backgroundColor: theme.colors.surface,
+        width: '80%',
+        height: 30,
+        alignSelf: 'flex-end',
+        borderWidth: 0,
+    },
+    iconSearchBox: {
+        color: '#000',
+        alignSelf: 'center',
+    },
+    filtersButtons: {
+        flexDirection: 'row',
+        justifyContent: 'center',
+        width: '40%',
+        alignSelf: 'center',
+    },
+    buttonFilter: {
+        height: 40,
+        alignSelf: 'center',
+        marginHorizontal: 5,
+        borderWidth: 1,
+        borderColor: '#000',
+        borderRadius: 50,
+    },
 
-  resultsSection: {
-    flex: 1,
-    marginTop: 12,
-    justifyContent: 'flex-start',
-    alignItems: 'center',
-  },
-  description: {
-    fontSize: 13,
+    resultsSection: {
+        flex: 1,
+        marginTop: 12,
+        justifyContent: 'flex-start',
+        alignItems: 'center',
+    },
+    description: {
+        fontSize: 13,
 
-    paddingTop: 8,
-  },
-  error: {
-    fontSize: 13,
+        paddingTop: 8,
+    },
+    error: {
+        fontSize: 13,
 
-    paddingTop: 8,
-  },
+        paddingTop: 8,
+    },
 })

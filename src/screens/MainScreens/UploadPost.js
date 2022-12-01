@@ -6,8 +6,10 @@ import { style } from 'styled-system'
 import Icon from 'react-native-vector-icons/Feather'
 import { TouchableHighlight } from 'react-native'
 import AsyncStorage from '@react-native-async-storage/async-storage'
-import { postPost } from '../../api/ApiFirebase'
+import { getImageFromStorage, postPost, uploadImageStorage } from '../../api/ApiFirebase'
 import * as ImagePicker from 'expo-image-picker'
+import { v4 as uuidv4 } from 'uuid'
+import { TouchableOpacity } from 'react-native-gesture-handler'
 
 //lo que muestra la app
 export default function UploadPost({ navigation, context }) {
@@ -41,33 +43,23 @@ export default function UploadPost({ navigation, context }) {
   })
 
   const handleUpload = async () => {
+
+    const uuid = uuidv4()
+    let img = false
+
     if (base64) {
-        
-
-        
-        
-        
-
-      var requestOptions = {
-        method: 'POST',
-        body: {
-          key: '6d207e02198a847aa98d0a2a901485a5',
-          action: 'upload',
-          source: base64,
-        },
-      };
-
-      const imagenDevolvida = await fetch('https://freeimage.host/api/1/upload', requestOptions)
-
-      console.log(imagenDevolvida);
+      const {bucket, contentType, fullPath, name} = await uploadImageStorage(base64, uuid)
+      img = {bucket, contentType, fullPath, name, id: uuid}
     }
+
     let data = {
       title: title,
       description: description,
+      img
     }
 
     //se va a subir los datos y el usuario
-    await postPost(uid, data)
+    await postPost(uid, data, uuid)
       .then(() => {
         console.log('Post subido')
       })
@@ -88,6 +80,8 @@ export default function UploadPost({ navigation, context }) {
 
     if (!result.cancelled) {
       setImage(result.uri)
+      setBase64(result.base64)
+
     }
   }
 
