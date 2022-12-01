@@ -73,10 +73,6 @@ const ProfileScreen = ({userId = ''}) => {
                                     <Text style={{ color: "#777777", marginLeft: 20 }}>Seguidores</Text>
                                 </View>
                                 <View style={styles.followsItem}>
-                                    <Text>{user.mutualFollows}</Text>
-                                    <Text style={{ color: "#777777", marginLeft: 20 }}>Seguidos</Text>
-                                </View>
-                                <View style={styles.followsItem}>
                                     <Text>{user.following}</Text>
                                     <Text style={{ color: "#777777", marginLeft: 20 }}>Siguiendo</Text>
                                 </View>
